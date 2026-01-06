@@ -9,15 +9,15 @@ The primary requirement is to ensure stable IP reachability between the peer rou
 * **R1 WAN Interface:** `10.0.0.2`
 * **R3 WAN Interface:** `10.0.0.6`
 
-[alt text](<Images/ip connectivity verification.png>)
+![alt text](<Images/ip connectivity verification.png>)
 
 ---
 
 ## 2. Phase 1: IKE / ISAKMP Configuration
 The first phase of the negotiation involves establishing a secure management channel by defining the **ISAKMP (Internet Security Association and Key Management Protocol)** policy.
 
-[alt text](<Images/isakmp policy R1.png>)
-[alt text](<Images/isakmp policy R3.png>)
+![alt text](<Images/isakmp policy R1.png>)
+![alt text](<Images/isakmp policy R3.png>)
 
 
 > **Security Note:** All parameters (Encryption, Hash, Diffie-Hellman group) must match exactly on both peers. The **lifetime** value is the only exception, if mismatched, the routers will automatically negotiate to the lowest configured value.
@@ -25,8 +25,8 @@ The first phase of the negotiation involves establishing a secure management cha
 ### Authentication
 For this lab, we use a **Pre-Shared Key (PSK)** to authenticate the peers.
 
-[alt text](<Images/pre-sahred key R1.png>) 
-[alt text](<Images/pre-sahred key R3.png>)
+![alt text](<Images/pre-sahred key R1.png>) 
+![alt text](<Images/pre-sahred key R3.png>)
 
 Upon successful configuration of the PSK and policy, Phase 1 is complete.
 
@@ -35,14 +35,14 @@ Upon successful configuration of the PSK and policy, Phase 1 is complete.
 ## 3. Phase 2: IPsec Transform-Set & Profile
 Phase 2 defines how the actual data will be protected. We configure a **Transform-Set** to specify the encryption and integrity algorithms. For VTI, we utilize **Tunnel Mode**.
 
-![R1 Transform-Set Configuration]
-![R3 Transform-Set Configuration]
+![alt text](<Images/transform-set R1.png>)
+![alt text](<Images/transform-set R3.png>)
 
 ### IPsec Profile Creation
 To bridge the Transform-Set with the Tunnel Interface, we create an **IPsec Profile**. This profile acts as a template for the tunnel's security parameters.
 
-![alt text](<Images/transform-set R1.png>)
-![alt text](<Images/transform-set R3.png>)
+![alt text](<Images/vti profile R1.png>)
+![alt text](<Images/vti profile R3.png>)
 
 With the profile defined, the Phase 2 parameters are fully established.
 
