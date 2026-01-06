@@ -1,77 +1,77 @@
-# Site-to-Site VPN using Cisco VTI (IPSec)
+# Site-to-Site VPN Deployment using Cisco VTI (IPsec)
 
-This guide outlines the configuration of a router-based VPN with IPSec using Cisco’s **Virtual Tunnel Interface (VTI)**.
+This project demonstrates the configuration of a secure Site-to-Site VPN tunnel utilizing Cisco’s **Virtual Tunnel Interface (VTI)**. Unlike traditional crypto maps, VTI simplifies configuration and supports dynamic routing protocols across the tunnel.
 
 ![Network Topology Diagram]
 
-## 1. Initial Connectivity
-The first step is to ensure there is IP connectivity between the two routers. 
-* **R1 Interface IP:** `10.0.0.2`
-* **R3 Interface IP:** `10.0.0.6`
+## 1. Establishing Layer 3 Connectivity
+The primary requirement is to ensure stable IP reachability between the peer routers before initiating the VPN.
+* **R1 WAN Interface:** `10.0.0.2`
+* **R3 WAN Interface:** `10.0.0.6`
 
-![Connectivity Verification - Ping Results]
+![Connectivity Verification - ICMP Ping Results]
 
 ---
 
-## 2. Phase 1: IKE / ISAKMP Policy
-Once we have connectivity, we need to configure Phase 1 and 2 of the Internet Key Exchange (IKE) connection. 
-
-On Phase 1, the **ISAKMP policy** must be configured on both routers:
+## 2. Phase 1: IKE / ISAKMP Configuration
+The first phase of the negotiation involves establishing a secure management channel by defining the **ISAKMP (Internet Security Association and Key Management Protocol)** policy.
 
 ![R1 ISAKMP Configuration]
 ![R3 ISAKMP Configuration]
 
-> **Note:** All features must match for the Phase 1 tunnel to form, with the exception of the **lifetime** value, which will be negotiated to the lowest value in case of a mismatch.
+> **Security Note:** All parameters (Encryption, Hash, Diffie-Hellman group) must match exactly on both peers. The **lifetime** value is the only exception; if mismatched, the routers will automatically negotiate to the lowest configured value.
 
-### Pre-Shared Key (PSK)
-Since the chosen authentication method is a pre-shared key, it must be configured on both routers:
+### Authentication
+For this lab, we use a **Pre-Shared Key (PSK)** to authenticate the peers.
 
 ![R1 PSK Configuration]
 ![R3 PSK Configuration]
 
-With this, **Phase 1** of the process is complete.
+Upon successful configuration of the PSK and policy, Phase 1 is complete.
 
 ---
 
-## 3. Phase 2: Transform-Set and Profile
-Now, a **transform-set** has to be configured for the second phase of the tunnel. This configuration must match on both routers. We will use **tunnel mode** (as opposed to transport mode).
+## 3. Phase 2: IPsec Transform-Set & Profile
+Phase 2 defines how the actual data will be protected. We configure a **Transform-Set** to specify the encryption and integrity algorithms. For VTI, we utilize **Tunnel Mode**.
 
 ![R1 Transform-Set Configuration]
 ![R3 Transform-Set Configuration]
 
-### IPsec Profile
-Once the transform set is done, a profile must be created to apply the transform set to, which in turn will be applied to the VTI tunnel:
+### IPsec Profile Creation
+To bridge the Transform-Set with the Tunnel Interface, we create an **IPsec Profile**. This profile acts as a template for the tunnel's security parameters.
 
 ![R1 IPSec Profile]
 ![R3 IPSec Profile]
 
-With this, **Phase 2** of the ISAKMP process is completed.
+With the profile defined, the Phase 2 parameters are fully established.
 
 ---
 
-## 4. VTI Tunnel Configuration
-Now, the **VTI tunnel** has to be created and the profile applied to it.
+## 4. Virtual Tunnel Interface (VTI) Deployment
+The final step in the VPN setup is the creation of the logical **Tunnel Interface**. By applying the IPsec profile directly to the tunnel, we eliminate the need for complex access lists (ACLs) used in legacy crypto-map configurations.
 
 ![R1 Tunnel Interface Configuration]
 ![R3 Tunnel Interface Configuration]
 
-### Verifying the IPsec Session
-We can now observe that there is an active IPSEC session:
+### Verification of Security Associations
+Once the interfaces are brought up, we can verify the state of the IPsec sessions.
 
-![Show Crypto IPsec SA - Part 1]
-![Show Crypto IPsec SA - Part 2]
+![Show Crypto IPsec SA - Output 1]
+![Show Crypto IPsec SA - Output 2]
 
 ---
 
-## 5. Routing over the Tunnel (OSPF)
-With this tunnel configured, routes can be exchanged between the routers using a protocol like **OSPF**. Both routers will form an adjacency as if they were directly connected and exchange their loopback interfaces.
+## 5. Dynamic Routing over IPsec (OSPF)
+With the VTI tunnel active, the routers treat the link as a point-to-point connection. This allows for the seamless exchange of routing information using **OSPF**. 
 
-![R1 Routing Table / OSPF Neighbors]
-![R3 Routing Table / OSPF Neighbors]
+The routers form an adjacency over the tunnel, allowing internal networks (such as Loopback interfaces) to be shared securely.
 
-As seen above, the **next hop** is not the physical interface, but the **Tunnel interface**. 
+![R1 OSPF Neighbor & Routing Table]
+![R3 OSPF Neighbor & Routing Table]
 
-### Final Verification
-The loopback interfaces can now ping each other successfully:
+**Observation:** As shown in the routing table, the next hop for remote networks is the **Tunnel interface** rather than the physical WAN interface.
 
-![Final Ping Test Success]
+### End-to-End Connectivity Test
+Successful communication between Loopback interfaces confirms that traffic is being correctly encapsulated and encrypted.
+
+![Final Ping Test - Successful End-to-End Connectivity]
