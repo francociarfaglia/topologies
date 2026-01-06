@@ -16,8 +16,8 @@ The primary requirement is to ensure stable IP reachability between the peer rou
 ## 2. Phase 1: IKE / ISAKMP Configuration
 The first phase of the negotiation involves establishing a secure management channel by defining the **ISAKMP (Internet Security Association and Key Management Protocol)** policy.
 
-[text](<Images/isakmp policy R1.png>)
-[text](<Images/isakmp policy R3.png>)
+[alt text](<Images/isakmp policy R1.png>)
+[alt text](<Images/isakmp policy R3.png>)
 
 
 > **Security Note:** All parameters (Encryption, Hash, Diffie-Hellman group) must match exactly on both peers. The **lifetime** value is the only exception, if mismatched, the routers will automatically negotiate to the lowest configured value.
