@@ -127,4 +127,4 @@ The routers form an adjacency over the tunnel, allowing internal networks (such 
 ### End-to-End Connectivity Test
 Successful communication between Loopback interfaces confirms that traffic is being correctly encapsulated and encrypted.
 
-![alt text](<Images/ip connectivity verification.png>)
+![alt text](Images/ping.png)
