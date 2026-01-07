@@ -32,9 +32,18 @@ crypto isakmp policy 10
 ### Authentication
 For this lab, we use a **Pre-Shared Key (PSK)** to authenticate the peers.
 
+On R1:
+
 ```
 crypto isakmp key SECRETKEY address 10.0.0.6 
 ```
+
+On R3:
+
+```
+crypto isakmp key SECRETKEY address 10.0.0.2 
+```
+
 
 ![alt text](<Images/pre-sahred key R1.png>) 
 ![alt text](<Images/pre-sahred key R3.png>)
