@@ -16,12 +16,12 @@ The primary requirement is to ensure stable IP reachability between the peer rou
 ## 2. Phase 1: IKE / ISAKMP Configuration
 The first phase of the negotiation involves establishing a secure management channel by defining the **ISAKMP (Internet Security Association and Key Management Protocol)** policy.
 
-<pre>
+```
 crypto isakmp policy 10
  encr aes
  authentication pre-share
  group 14
-</pre>
+```
 
 ![alt text](<Images/isakmp policy R1.png>)
 ![alt text](<Images/isakmp policy R3.png>)
@@ -31,6 +31,10 @@ crypto isakmp policy 10
 
 ### Authentication
 For this lab, we use a **Pre-Shared Key (PSK)** to authenticate the peers.
+
+```
+crypto isakmp key SECRETKEY address 10.0.0.6 
+```
 
 ![alt text](<Images/pre-sahred key R1.png>) 
 ![alt text](<Images/pre-sahred key R3.png>)
@@ -42,11 +46,21 @@ Upon successful configuration of the PSK and policy, Phase 1 is complete.
 ## 3. Phase 2: IPsec Transform-Set & Profile
 Phase 2 defines how the actual data will be protected. We configure a **Transform-Set** to specify the encryption and integrity algorithms. For VTI, we utilize **Tunnel Mode**.
 
+```
+crypto ipsec transform-set VTISET ah-sha-hmac esp-aes 
+ mode tunnel
+```
+
 ![alt text](<Images/transform-set R1.png>)
 ![alt text](<Images/transform-set R3.png>)
 
 ### IPsec Profile Creation
 To bridge the Transform-Set with the Tunnel Interface, we create an **IPsec Profile**. This profile acts as a template for the tunnel's security parameters.
+
+```
+crypto ipsec profile VTIPROFILE
+ set transform-set VTISET 
+```
 
 ![alt text](<Images/vti profile R1.png>)
 ![alt text](<Images/vti profile R3.png>)
@@ -57,6 +71,28 @@ With the profile defined, the Phase 2 parameters are fully established.
 
 ## 4. Virtual Tunnel Interface (VTI) Deployment
 The final step in the VPN setup is the creation of the logical **Tunnel Interface**. By applying the IPsec profile directly to the tunnel, we eliminate the need for complex access lists (ACLs) used in legacy crypto-map configurations.
+
+On R1:
+
+```
+interface Tunnel10
+ ip address 172.16.0.1 255.255.255.252
+ tunnel source 10.0.0.2
+ tunnel mode ipsec ipv4
+ tunnel destination 10.0.0.6
+ tunnel protection ipsec profile VTIPROFILE
+```
+
+On R3
+
+```
+interface Tunnel10
+ ip address 172.16.0.2 255.255.255.252
+ tunnel source 10.0.0.6
+ tunnel mode ipsec ipv4
+ tunnel destination 10.0.0.2
+ tunnel protection ipsec profile VTIPROFILE
+```
 
 ![alt text](<Images/tunnel 10 interface R1.png>)
 ![alt text](<Images/tunnel 10 interface R3.png>)
