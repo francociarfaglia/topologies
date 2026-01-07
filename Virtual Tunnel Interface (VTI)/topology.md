@@ -16,6 +16,13 @@ The primary requirement is to ensure stable IP reachability between the peer rou
 ## 2. Phase 1: IKE / ISAKMP Configuration
 The first phase of the negotiation involves establishing a secure management channel by defining the **ISAKMP (Internet Security Association and Key Management Protocol)** policy.
 
+<pre>
+crypto isakmp policy 10
+ encr aes
+ authentication pre-share
+ group 14
+</pre>
+
 ![alt text](<Images/isakmp policy R1.png>)
 ![alt text](<Images/isakmp policy R3.png>)
 
