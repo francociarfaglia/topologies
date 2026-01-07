@@ -1,6 +1,6 @@
 # Site-to-Site VPN Deployment using Cisco VTI (IPsec)
 
-This project demonstrates the configuration of a secure Site-to-Site VPN tunnel utilizing Cisco’s **Virtual Tunnel Interface (VTI)**. Unlike traditional crypto maps, VTI simplifies configuration and supports dynamic routing protocols across the tunnel.
+This topology demonstrates the configuration of a secure Site-to-Site VPN tunnel utilizing Cisco’s **Virtual Tunnel Interface (VTI)**. Unlike traditional crypto maps, VTI simplifies configuration and supports dynamic routing protocols across the tunnel.
 
 ![alt text](<Images/VTI topology.png>)
 
